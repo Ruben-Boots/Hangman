@@ -2,19 +2,25 @@
 import java.util.*;
 
 public class Hangman {
+	public static void main(String[] args) {
+		HangmanSpel hs = new HangmanSpel();
+		hs.spelen();	
+	}
+}
+
+class HangmanSpel {
 	Scanner input = new Scanner(System.in);
 	
-	public static void main(String[] args) {
+	void spelen() {
 		System.out.println("Welkom bij Guillotineman (Hangman)");
-		Hangman a = new Hangman();
-		Woord woord = new Woord(a.vraagWoord());
+		Woord woord = new Woord(vraagWoord());
 		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 		System.out.println("Raad het woord dat hieronder moet verschijnen.");
 		woord.printMijnWoord();
 		
 		for (int i = 8; i>0; i--) {
 			System.out.println("Het mes valt over " + i + " poging(en)");
-			String raad = a.vraagLetter();
+			String raad = vraagLetter();
 			if (raad.length() == 1) {
 				woord.raden(raad.charAt(0));
 			} else {
@@ -34,25 +40,25 @@ public class Hangman {
 		if (!woord.check()) {
 			System.out.println("Helaas, je hebt het niet geraden, dus je bent onthoofd. Het woord was: " + woord.woordKlein);
 		}
-		
-		
-		
 	}
 	
+
+
 	public String vraagWoord() {
 		System.out.println("Welk woord wil je dat er geraden wordt?");
 		String name = input.nextLine();
 		return name;
 	}
-	
+
 	public String vraagLetter() {
 		System.out.println("Raad een letter of het woord.");
 		String letter = input.next();
 		return letter;
 	}
+	
 }
 
-class Woord {
+class Woord extends HangmanSpel{
 	String woordKlein;
 	char[] mijnWoord;
 	ArrayList<Character> lettersGeraden = new ArrayList<Character>();
@@ -66,16 +72,21 @@ class Woord {
 	}
 	
 	public void raden(char letter) {
-		boolean ja = false;
+		if (lettersGeraden.contains(letter)) {
+			System.out.println("Je hebt de letter " + letter + " al geprobeerd, probeer een andere letter.");
+			String raad = vraagLetter();
+			if (raad.length() == 1) {
+				raden(raad.charAt(0));
+			} else {
+				gok(raad);
+			}
+		}
 		for (int i=0; i<mijnWoord.length; i++) {
 			if (woordKlein.charAt(i) == letter) {
 				mijnWoord[i] = woordKlein.charAt(i);
-				ja = true;
 			} 
 		}
-		if (!ja) {
-			lettersGeraden.add(letter);
-		}
+		lettersGeraden.add(letter);
 	}
 	
 	public void printMijnWoord() {
@@ -88,7 +99,7 @@ class Woord {
 	
 	public void printLettersGeraden() {
 		System.out.println("\n");
-		System.out.println("Je hebt al fout geraden: ");
+		System.out.println("Je hebt al geraden: ");
 		for (char letter : lettersGeraden) {
 			System.out.print(letter + " ");
 		}
